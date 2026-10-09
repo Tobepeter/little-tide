@@ -1,0 +1,13 @@
+import { key, LIMIT, chooseColor, editTown } from './model.js';
+
+export function lineCells(from,to){if(!to)return[];if(!from)return[to];let[x,z]=from.split(',').map(Number);const[tx,tz]=to.split(',').map(Number),dx=Math.abs(tx-x),dz=Math.abs(tz-z),sx=x<tx?1:-1,sz=z<tz?1:-1;let error=dx-dz;const cells=[];for(let i=0;i<100;i++){cells.push(key(x,z));if(x===tx&&z===tz)break;const e=2*error;if(e>-dz){error-=dz;x+=sx}if(e<dx){error+=dx;z+=sz}}return cells}
+export function brushCells(center,size=1){if(!center)return[];const[x,z]=center.split(',').map(Number),r=Math.floor(size/2),cells=[];for(let dz=-r;dz<=r;dz++)for(let dx=-r;dx<=r;dx++)if(Math.abs(x+dx)<=LIMIT&&Math.abs(z+dz)<=LIMIT)cells.push(key(x+dx,z+dz));return cells}
+export function screenSamples(from,to,spacing=6){if(!from)return[to];const n=Math.max(1,Math.ceil(Math.hypot(to.clientX-from.clientX,to.clientY-from.clientY)/spacing));return Array.from({length:Math.min(n,512)},(_,i)=>{const t=(i+1)/Math.min(n,512);return{clientX:from.clientX+(to.clientX-from.clientX)*t,clientY:from.clientY+(to.clientY-from.clientY)*t}})}
+// Decide once on pointer-down. A normal press waits for tap-or-drag recognition.
+export function gestureIntent({button=0,space=false,touches=0,continuous=false,shift=false,pointerType='mouse'}){if(touches>1||space||button===1||button===2)return'camera';if(continuous||(shift&&pointerType!=='touch'))return'brush';return'pending'}
+export class BrushStroke{
+ constructor(town,{mode='build',selected=-1,style=-1,size=1,eraseWhole=true,rng=Math.random}={}){this.before=JSON.stringify(town);this.mode=mode;this.selected=selected;this.style=style;this.size=size;this.eraseWhole=eraseWhole;this.rng=rng;this.visited=new Set();this.changed=new Map();this.last=null}
+ stamp(town,center){if(!center){this.last=null;return[]}let path=[center];if(this.last){const a=this.last.split(',').map(Number),b=center.split(',').map(Number);if(Math.max(Math.abs(a[0]-b[0]),Math.abs(a[1]-b[1]))<=4)path=lineCells(this.last,center)}this.last=center;const updates=[];for(const k of path.flatMap(c=>brushCells(c,this.size))){if(this.visited.has(k))continue;this.visited.add(k);const before=town[k]?{...town[k]}:null,operation=this.mode==='erase'&&this.eraseWhole?'eraseAll':this.mode,color=chooseColor(this.selected,town[k],this.mode,this.rng);if(!editTown(town,k,operation,color,this.style,this.rng))continue;const after=town[k]?{...town[k]}:null,kind=this.mode==='erase'?'remove':this.mode==='paint'?'paint':before?'grow':'new';const update={key:k,before,after,kind};updates.push(update);this.changed.set(k,update)}return updates}
+ get hasChanges(){return this.changed.size>0}
+ cancel(){return JSON.parse(this.before)}
+}

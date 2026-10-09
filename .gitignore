@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+scripts/.ui-test.mjs
+.env
+.env.*
+!.env.example
+npm-debug.log*
