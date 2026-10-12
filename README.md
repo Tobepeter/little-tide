@@ -2,7 +2,7 @@
 
 一个可直接在浏览器中玩的 3D 水上积木小镇。使用 Three.js 绘制建筑与水面，React、shadcn/ui 和 Lucide 提供简洁的操作界面。
 
-[打开在线站点](https://little-tide-town.zippy-pearl-2484.chatgpt.site)
+[打开在线站点](https://town.tobeei.com)
 
 ## 功能
 
@@ -56,6 +56,7 @@ python3 -m http.server 5173 --directory dist
 | `dist/brush.js` | 范围编辑与笔刷逻辑 |
 | `dist/motion.js` | 建造动画 |
 | `dist/camera-input.js` | 相机输入协调 |
+| `dist/water.js` | Three.js Water 适配、法线贴图与昼夜光照 |
 | `dist/render-budget.js` | 渲染预算与性能设置 |
 | `dist/ui-store.js` | 游戏与 React 界面之间的状态桥接 |
 | `dist/vendor/` | 浏览器端 Three.js 依赖及第三方许可文件 |
@@ -74,3 +75,11 @@ python3 -m http.server 5173 --directory dist
 ## 第三方组件
 
 依赖版本记录在 `package-lock.json`。浏览器端随项目分发的第三方许可保留在 `dist/vendor/` 与 `dist/ui.js.LEGAL.txt` 中。
+
+## 水面实现
+
+复用 Three.js r180 的官方 `Water` 组件与 `waternormals.jpg`，通过四层不同尺度、方向与速度的法线贴图形成不规则细波纹。水面使用视角相关的 Fresnel 反射和经过过滤的太阳高光；建筑阴影由水面材质直接接收。
+
+手机反射贴图最长边限制为 512 像素（桌面 1024），静止视角下反射每秒更新约 15 次，波纹仍随主画面刷新；相机和建筑变化会立即刷新反射。法线贴图启用 mipmap，降低远处波纹闪烁。关闭动画时水面停止流动。
+
+贴图与组件均随仓库托管，不依赖外部 CDN。来源和本地适配记录见 `dist/vendor/WATER-NOTICE.md`。

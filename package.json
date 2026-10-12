@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check dist/game.js && node --check dist/camera-input.js && node --check dist/model.js && node --check dist/brush.js && node --check dist/motion.js && node --check dist/render-budget.js && node scripts/verify.mjs && node scripts/verify-motion.mjs && node scripts/verify-render.mjs && node scripts/verify-input.mjs && node scripts/verify-input.mjs --touch && node scripts/verify-ui.mjs",
+    "check": "node --check dist/game.js && node --check dist/camera-input.js && node --check dist/model.js && node --check dist/brush.js && node --check dist/motion.js && node --check dist/render-budget.js && node --check dist/water.js && node scripts/verify.mjs && node scripts/verify-motion.mjs && node scripts/verify-render.mjs && node scripts/verify-water.mjs && node scripts/verify-input.mjs && node scripts/verify-input.mjs --touch && node scripts/verify-ui.mjs",
     "build": "node scripts/build-ui.mjs"
   },
   "dependencies": {
