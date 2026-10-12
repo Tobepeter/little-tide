@@ -12,4 +12,7 @@ expose `getRenderTarget()` for resizing and `dispose()` for resource cleanup.
 The adapter in `../water.js` keeps the upstream four-layer normal-map animation
 and planar-reflection implementation. It adjusts wave slope, Fresnel reflectance,
 water color, sun-highlight filtering and reflection sampling for Little Tide.
+The calm cartoon preset uses larger, shallower and slower ripples; a positive
+normal-map mip bias filters fine wrinkles without adding texture samples. The
+reflected image is lightly tinted and its contribution capped at grazing angles.
 The normal map is the unmodified 1024×1024 upstream image and is served locally.

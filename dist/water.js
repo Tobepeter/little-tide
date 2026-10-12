@@ -2,23 +2,31 @@ import * as THREE from './vendor/three.module.js';
 import {Water} from './vendor/Water.js';
 
 // Reuse r180's four scrolling normal-map samples, reflection camera and sun
-// lighting. Only tune the material for the scale and palette of this small town.
+// lighting. This calm preset removes fine ocean detail to suit the cartoon town.
 export function createTownWater({textureWidth,textureHeight,sunDirection,anisotropy=2,normalMap=null,textureLoader=new THREE.TextureLoader()}={}){
   const fallback=new THREE.DataTexture(new Uint8Array([128,128,255,255]),1,1);
   fallback.needsUpdate=true;
   const water=new Water(new THREE.PlaneGeometry(220,220),{
     textureWidth,textureHeight,waterNormals:normalMap??fallback,
     sunDirection:sunDirection?.clone().normalize(),sunColor:'#fff0d3',
-    waterColor:'#397f9b',distortionScale:.65,clipBias:.003,fog:true,
+    waterColor:'#397f9b',distortionScale:.28,clipBias:.003,fog:true,
   });
   water.rotation.x=-Math.PI/2;water.position.y=-.04;water.receiveShadow=true;
   water.material.name='LittleTideWater';
-  water.material.uniforms.size.value=8;
-  // Gentler slopes, physical water Fresnel and antialiased sun highlights.
+  water.material.uniforms.size.value=2.4;
+  // Broad, shallow ripples, filtered normal detail and soft sun highlights.
   // Keep these small, asserted patches separate from the vendored component.
   const replacements=[
-    ['vec3( 1.5, 1.0, 1.5 )','vec3( 0.55, 1.0, 0.55 )'],
+    ['vec3( 1.5, 1.0, 1.5 )','vec3( 0.16, 1.0, 0.16 )'],
     ['float rf0 = 0.3;','float rf0 = 0.02;'],
+    // Positive mip bias removes the texture's tiny wrinkles at every distance.
+    // Keep automatic distance filtering and the existing four texture samples.
+    ...[0,1,2,3].map(i=>[
+      `texture2D( normalSampler, uv${i} )`,
+      `texture2D( normalSampler, uv${i}, 3.0 )`,
+    ]),
+    ['sunLight( surfaceNormal, eyeDirection, 100.0, 2.0, 0.5, diffuseLight, specularLight );',
+     'sunLight( surfaceNormal, eyeDirection, 48.0, 0.8, 0.5, diffuseLight, specularLight );'],
     ['specularColor += pow( direction, shiny ) * sunColor * spec;',
      `float variance = dot( dFdx( surfaceNormal ), dFdx( surfaceNormal ) )
                      + dot( dFdy( surfaceNormal ), dFdy( surfaceNormal ) );
@@ -27,7 +35,8 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
     ['vec3 albedo = mix( ( sunColor * diffuseLight * 0.3 + scatter ) * getShadowMask(), ( vec3( 0.1 ) + reflectionSample * 0.9 + reflectionSample * specularLight ), reflectance);',
      `float shadow = getShadowMask();
       vec3 body = ( waterColor * 0.45 + scatter * 0.55 ) * mix( 0.72, 1.0, shadow ) + diffuseLight * waterColor * 0.15 * shadow;
-      vec3 albedo = mix( body, reflectionSample, reflectance ) + specularLight * reflectance * shadow;`],
+      vec3 softReflection = mix( reflectionSample, waterColor, 0.18 );
+      vec3 albedo = mix( body, softReflection, min( reflectance, 0.55 ) ) + specularLight * reflectance * shadow;`],
     // Clamp only the sampling coordinate; do not smear the whole reflection
     // with a fixed screen-space sinusoid as the previous water shader did.
     ['mirrorCoord.xy / mirrorCoord.w + distortion',
@@ -79,5 +88,5 @@ export function advanceWater(water,elapsed,animated=true){
   const previous=water.userData.lastWaterTime??elapsed;
   water.userData.lastWaterTime=elapsed;
   // Resume without a large jump after a hidden tab or a motion preference change.
-  if(animated)water.material.uniforms.time.value+=Math.max(0,Math.min(elapsed-previous,.05))*.22;
+  if(animated)water.material.uniforms.time.value+=Math.max(0,Math.min(elapsed-previous,.05))*.04;
 }
