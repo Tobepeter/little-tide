@@ -1,6 +1,12 @@
 import * as THREE from './vendor/three.module.js';
 import {Water} from './vendor/Water.js';
 
+// Palette A targets #72bce3 on screen. ACES at exposure 1.3 desaturates blue,
+// so this input is calibrated for the default camera, sky and Fresnel blend.
+// Reflections and viewing angle still vary the visible color naturally.
+const DAY_WATER_COLOR='#009ffa';
+const DAY_WATER_LIGHT=new THREE.Color('#ffffff');
+
 // Reuse r180's four scrolling normal-map samples, reflection camera and sun
 // lighting. This calm preset removes fine ocean detail to suit the cartoon town.
 export function createTownWater({textureWidth,textureHeight,sunDirection,anisotropy=2,normalMap=null,textureLoader=new THREE.TextureLoader()}={}){
@@ -8,8 +14,8 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
   fallback.needsUpdate=true;
   const water=new Water(new THREE.PlaneGeometry(220,220),{
     textureWidth,textureHeight,waterNormals:normalMap??fallback,
-    sunDirection:sunDirection?.clone().normalize(),sunColor:'#fff0d3',
-    waterColor:'#509fc8',distortionScale:.45,clipBias:.003,fog:true,
+    sunDirection:sunDirection?.clone().normalize(),sunColor:DAY_WATER_LIGHT,
+    waterColor:DAY_WATER_COLOR,distortionScale:.45,clipBias:.003,fog:true,
   });
   water.rotation.x=-Math.PI/2;water.position.y=-.04;water.receiveShadow=true;
   water.material.name='LittleTideWater';
@@ -34,10 +40,10 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
       specularColor += pow( direction, filteredShiny ) * ( filteredShiny / shiny ) * sunColor * spec;`],
     ['vec3 albedo = mix( ( sunColor * diffuseLight * 0.3 + scatter ) * getShadowMask(), ( vec3( 0.1 ) + reflectionSample * 0.9 + reflectionSample * specularLight ), reflectance);',
      `float shadow = getShadowMask();
-      // Restore view-dependent depth instead of painting noise onto a solid
-      // blue body. Motion comes from reflections and light on the normals.
-      vec3 body = ( waterColor * 0.45 + scatter * 0.55 ) * mix( 0.88, 1.0, shadow ) + diffuseLight * waterColor * 0.08 * shadow;
-      vec3 softReflection = mix( reflectionSample, waterColor, 0.12 );
+      // Keep angle-dependent depth and moving reflections. A gentle shadow
+      // floor and neutral water lighting avoid a muddy gray/green cast.
+      vec3 body = ( waterColor * 0.55 + scatter * 0.45 ) * mix( 0.94, 1.0, shadow ) + diffuseLight * waterColor * 0.06 * shadow;
+      vec3 softReflection = mix( reflectionSample, waterColor, 0.18 );
       vec3 albedo = mix( body, softReflection, min( reflectance, 0.65 ) ) + specularLight * reflectance * shadow;`],
     // Clamp only the sampling coordinate; do not smear the whole reflection
     // with a fixed screen-space sinusoid as the previous water shader did.
@@ -81,8 +87,8 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
 
 export function setWaterLighting(water,night,sun){
   const u=water.material.uniforms;
-  u.waterColor.value.set(night?'#102e47':'#509fc8');
-  u.sunColor.value.copy(sun.color).multiplyScalar(night?.16:1.8);
+  u.waterColor.value.set(night?'#102e47':DAY_WATER_COLOR);
+  u.sunColor.value.copy(night?sun.color:DAY_WATER_LIGHT).multiplyScalar(night?.16:1.8);
   u.sunDirection.value.copy(sun.position).sub(sun.target.position).normalize();
 }
 

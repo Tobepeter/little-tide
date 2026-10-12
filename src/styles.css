@@ -44,7 +44,7 @@ body.dark {
   * {border-color:var(--border)}
   html,body {margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
   html {-webkit-text-size-adjust:100%;text-size-adjust:100%}
-  body {background:#203d54;color:var(--foreground)}
+  body {background:#b8def2;color:var(--foreground)}
   button,[role=menuitem],[role=menuitemcheckbox],[role=radio],[role=switch] {cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
   button:disabled {cursor:default}
   button,select {font:inherit}
@@ -130,7 +130,7 @@ body.dark {
   transition:opacity .2s,transform .2s;box-shadow:0 3px 15px #2b536e12;
 }
 .game-toast.visible {opacity:1;transform:translate(-50%,0)}
-#loading {position:fixed;inset:0;z-index:100;background:#203d54;color:#c4dce9;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;font-size:12px;transition:opacity .45s ease}
+#loading {position:fixed;inset:0;z-index:100;background:#b8def2;color:#36566b;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;font-size:12px;transition:opacity .45s ease}
 #loading.done {opacity:0;pointer-events:none}
 .loading-scene {display:block;width:clamp(200px,42vw,248px);height:auto;overflow:visible;flex:none}
 .loading-float {animation:loading-float 3.2s ease-in-out 1s infinite}
@@ -140,10 +140,10 @@ body.dark {
 .loading-shadow {transform-origin:100px 153px;animation:loading-shadow 3.2s ease-in-out 1s infinite}
 .loading-orbit {animation:loading-orbit 2.2s linear infinite}
 .loading-window {animation:loading-window 3.2s ease-in-out 1s infinite;opacity:.12}
-.loading-retry {display:grid;place-items:center;width:44px;height:44px;border:1px solid #9bc6dd33;border-radius:12px;background:#c4e7f30d;color:inherit;cursor:pointer;transition:background .2s}
+.loading-retry {display:grid;place-items:center;width:44px;height:44px;border:1px solid #4b91bd40;border-radius:12px;background:#ffffff26;color:inherit;cursor:pointer;transition:background .2s}
 .loading-retry svg {width:20px;height:20px}
-.loading-retry:hover {background:#c4e7f31a}
-.loading-retry:focus-visible {outline:2px solid #a3d6ef;outline-offset:3px}
+.loading-retry:hover {background:#ffffff40}
+.loading-retry:focus-visible {outline:2px solid #317fb5;outline-offset:3px}
 #loading[data-state=error] .loading-scene * {animation:none}
 #loading[data-state=error] .loading-orbit {opacity:0}
 @keyframes loading-orbit {to{stroke-dashoffset:-330.377}}
