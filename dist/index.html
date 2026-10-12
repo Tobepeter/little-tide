@@ -49,7 +49,10 @@
       </g>
     </g>
   </svg>
-  <span id="loading-status" class="sr-only">正在搭建小镇</span>
+  <div class="loading-caption">
+    <span id="loading-status">加载中</span>
+    <span class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+  </div>
   <button id="loading-retry" class="loading-retry" type="button" hidden>重新加载</button>
 </div>
 <div id="ui-root"></div>
@@ -58,7 +61,7 @@ import('./ui.js').then(()=>import('./game.js')).catch(error=>{
   console.error(error);const loading=document.getElementById('loading');
   if(loading){
     loading.classList.remove('done');loading.dataset.state='error';loading.setAttribute('role','alert');loading.removeAttribute('aria-hidden');
-    const status=document.getElementById('loading-status');status.classList.remove('sr-only');status.textContent='小镇暂时没能打开';
+    document.getElementById('loading-status').textContent='小镇暂时没能打开';
     const retry=document.getElementById('loading-retry');retry.hidden=false;retry.addEventListener('click',()=>location.reload());
   }
 });
