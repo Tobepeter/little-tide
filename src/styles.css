@@ -44,7 +44,7 @@ body.dark {
   * {border-color:var(--border)}
   html,body {margin:0;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
   html {-webkit-text-size-adjust:100%;text-size-adjust:100%}
-  body {background:#bfd8e3;color:var(--foreground)}
+  body {background:#e5f3ff;color:var(--foreground)}
   button,[role=menuitem],[role=menuitemcheckbox],[role=radio],[role=switch] {cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
   button:disabled {cursor:default}
   button,select {font:inherit}
@@ -131,7 +131,7 @@ body.dark {
   transition:opacity .2s,transform .2s;box-shadow:0 3px 15px #2b536e12;
 }
 .game-toast.visible {opacity:1;transform:translate(-50%,0)}
-#loading {position:fixed;inset:0;z-index:100;background:#bfd8e3;color:#41657d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;font-size:12px;transition:opacity .45s ease}
+#loading {position:fixed;inset:0;z-index:100;background:#e5f3ff;color:#527c9e;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;font-size:12px;transition:opacity .45s ease}
 #loading.done {opacity:0;pointer-events:none}
 body.night #loading {background:#142738;color:#a7c5d5}
 .loading-scene {display:block;width:clamp(168px,35vw,204px);height:auto;overflow:visible;flex:none}

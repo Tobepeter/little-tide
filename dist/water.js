@@ -9,7 +9,7 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
   const water=new Water(new THREE.PlaneGeometry(220,220),{
     textureWidth,textureHeight,waterNormals:normalMap??fallback,
     sunDirection:sunDirection?.clone().normalize(),sunColor:'#fff0d3',
-    waterColor:'#397f9b',distortionScale:.28,clipBias:.003,fog:true,
+    waterColor:'#4baafa',distortionScale:.28,clipBias:.003,fog:true,
   });
   water.rotation.x=-Math.PI/2;water.position.y=-.04;water.receiveShadow=true;
   water.material.name='LittleTideWater';
@@ -34,13 +34,15 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
       specularColor += pow( direction, filteredShiny ) * ( filteredShiny / shiny ) * sunColor * spec;`],
     ['vec3 albedo = mix( ( sunColor * diffuseLight * 0.3 + scatter ) * getShadowMask(), ( vec3( 0.1 ) + reflectionSample * 0.9 + reflectionSample * specularLight ), reflectance);',
      `float shadow = getShadowMask();
-      vec3 body = ( waterColor * 0.45 + scatter * 0.55 ) * mix( 0.72, 1.0, shadow ) + diffuseLight * waterColor * 0.15 * shadow;
+      // Keep the blue body readable at shallow angles; warm sunlight and deep
+      // shadows should not turn the pastel water grey-green.
+      vec3 body = ( waterColor * 0.88 + scatter * 0.12 ) * mix( 0.84, 1.0, shadow ) + diffuseLight * waterColor * 0.05 * shadow;
       // Broad, soft color glints reveal the existing flow even away from the
       // sun's reflection. Reuse filtered normals; no new texture or render pass.
       float rippleLight = smoothstep( 0.005, 0.095, noise.x * 0.7 + noise.y * 0.3 );
       body = mix( body, waterColor * 1.55, rippleLight * 0.24 * shadow );
-      vec3 softReflection = mix( reflectionSample, waterColor, 0.18 );
-      vec3 albedo = mix( body, softReflection, min( reflectance, 0.55 ) ) + specularLight * reflectance * shadow;`],
+      vec3 softReflection = mix( reflectionSample, waterColor, 0.35 );
+      vec3 albedo = mix( body, softReflection, min( reflectance, 0.45 ) ) + specularLight * reflectance * shadow;`],
     // Clamp only the sampling coordinate; do not smear the whole reflection
     // with a fixed screen-space sinusoid as the previous water shader did.
     ['mirrorCoord.xy / mirrorCoord.w + distortion',
@@ -83,7 +85,7 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
 
 export function setWaterLighting(water,night,sun){
   const u=water.material.uniforms;
-  u.waterColor.value.set(night?'#102e47':'#397f9b');
+  u.waterColor.value.set(night?'#102e47':'#4baafa');
   u.sunColor.value.copy(sun.color).multiplyScalar(night?.16:1.8);
   u.sunDirection.value.copy(sun.position).sub(sun.target.position).normalize();
 }
