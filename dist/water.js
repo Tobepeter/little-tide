@@ -17,7 +17,7 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
   // Broad, shallow ripples, filtered normal detail and soft sun highlights.
   // Keep these small, asserted patches separate from the vendored component.
   const replacements=[
-    ['vec3( 1.5, 1.0, 1.5 )','vec3( 0.16, 1.0, 0.16 )'],
+    ['vec3( 1.5, 1.0, 1.5 )','vec3( 0.20, 1.0, 0.20 )'],
     ['float rf0 = 0.3;','float rf0 = 0.02;'],
     // Positive mip bias removes the texture's tiny wrinkles at every distance.
     // Keep automatic distance filtering and the existing four texture samples.
@@ -35,6 +35,10 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
     ['vec3 albedo = mix( ( sunColor * diffuseLight * 0.3 + scatter ) * getShadowMask(), ( vec3( 0.1 ) + reflectionSample * 0.9 + reflectionSample * specularLight ), reflectance);',
      `float shadow = getShadowMask();
       vec3 body = ( waterColor * 0.45 + scatter * 0.55 ) * mix( 0.72, 1.0, shadow ) + diffuseLight * waterColor * 0.15 * shadow;
+      // Broad, soft color glints reveal the existing flow even away from the
+      // sun's reflection. Reuse filtered normals; no new texture or render pass.
+      float rippleLight = smoothstep( 0.005, 0.095, noise.x * 0.7 + noise.y * 0.3 );
+      body = mix( body, waterColor * 1.55, rippleLight * 0.24 * shadow );
       vec3 softReflection = mix( reflectionSample, waterColor, 0.18 );
       vec3 albedo = mix( body, softReflection, min( reflectance, 0.55 ) ) + specularLight * reflectance * shadow;`],
     // Clamp only the sampling coordinate; do not smear the whole reflection
@@ -88,5 +92,6 @@ export function advanceWater(water,elapsed,animated=true){
   const previous=water.userData.lastWaterTime??elapsed;
   water.userData.lastWaterTime=elapsed;
   // Resume without a large jump after a hidden tab or a motion preference change.
-  if(animated)water.material.uniforms.time.value+=Math.max(0,Math.min(elapsed-previous,.05))*.04;
+  // Visible drift without restoring the dense waves of the original preset.
+  if(animated)water.material.uniforms.time.value+=Math.max(0,Math.min(elapsed-previous,.05))*.14;
 }
