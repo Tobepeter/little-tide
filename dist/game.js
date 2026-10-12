@@ -26,7 +26,7 @@ const water=createTownWater({textureWidth:reflectionDimensions[0],textureHeight:
 const renderReflection=water.onBeforeRender;
 water.onBeforeRender=function(...args){if(reflectionBudget.take(performance.now()))renderReflection.apply(this,args)};
 controls.addEventListener('change',()=>reflectionBudget.invalidate());
-const grid=new THREE.GridHelper(CELL*23,23,'#57819d','#57819d');grid.position.set(CELL*.5,-.027,CELL*.5);grid.material.transparent=true;grid.material.opacity=.09;grid.material.depthWrite=false;scene.add(grid);
+const grid=new THREE.GridHelper(CELL*23,23,'#57819d','#57819d');grid.position.set(CELL*.5,-.027,CELL*.5);grid.material.transparent=true;grid.material.opacity=.09;grid.material.depthWrite=false;grid.visible=false;scene.add(grid);
 const raycaster=new THREE.Raycaster(),mouse=new THREE.Vector2(),seaPlane=new THREE.Plane(new THREE.Vector3(0,1,0),0);
 const groundOutline=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(CELL*.97,.014,CELL*.97)),new THREE.LineBasicMaterial({color:'#f1faff',transparent:true,opacity:.7,depthWrite:false}));groundOutline.visible=false;scene.add(groundOutline);
 const reducedPreference=window.matchMedia('(prefers-reduced-motion: reduce)').matches;

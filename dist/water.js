@@ -9,7 +9,7 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
   const water=new Water(new THREE.PlaneGeometry(220,220),{
     textureWidth,textureHeight,waterNormals:normalMap??fallback,
     sunDirection:sunDirection?.clone().normalize(),sunColor:'#fff0d3',
-    waterColor:'#4baafa',distortionScale:.28,clipBias:.003,fog:true,
+    waterColor:'#509fc8',distortionScale:.45,clipBias:.003,fog:true,
   });
   water.rotation.x=-Math.PI/2;water.position.y=-.04;water.receiveShadow=true;
   water.material.name='LittleTideWater';
@@ -17,8 +17,8 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
   // Broad, shallow ripples, filtered normal detail and soft sun highlights.
   // Keep these small, asserted patches separate from the vendored component.
   const replacements=[
-    ['vec3( 1.5, 1.0, 1.5 )','vec3( 0.20, 1.0, 0.20 )'],
-    ['float rf0 = 0.3;','float rf0 = 0.02;'],
+    ['vec3( 1.5, 1.0, 1.5 )','vec3( 0.28, 1.0, 0.28 )'],
+    ['float rf0 = 0.3;','float rf0 = 0.06;'],
     // Positive mip bias removes the texture's tiny wrinkles at every distance.
     // Keep automatic distance filtering and the existing four texture samples.
     ...[0,1,2,3].map(i=>[
@@ -34,15 +34,11 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
       specularColor += pow( direction, filteredShiny ) * ( filteredShiny / shiny ) * sunColor * spec;`],
     ['vec3 albedo = mix( ( sunColor * diffuseLight * 0.3 + scatter ) * getShadowMask(), ( vec3( 0.1 ) + reflectionSample * 0.9 + reflectionSample * specularLight ), reflectance);',
      `float shadow = getShadowMask();
-      // Keep the blue body readable at shallow angles; warm sunlight and deep
-      // shadows should not turn the pastel water grey-green.
-      vec3 body = ( waterColor * 0.88 + scatter * 0.12 ) * mix( 0.84, 1.0, shadow ) + diffuseLight * waterColor * 0.05 * shadow;
-      // Broad, soft color glints reveal the existing flow even away from the
-      // sun's reflection. Reuse filtered normals; no new texture or render pass.
-      float rippleLight = smoothstep( 0.005, 0.095, noise.x * 0.7 + noise.y * 0.3 );
-      body = mix( body, waterColor * 1.55, rippleLight * 0.24 * shadow );
-      vec3 softReflection = mix( reflectionSample, waterColor, 0.35 );
-      vec3 albedo = mix( body, softReflection, min( reflectance, 0.45 ) ) + specularLight * reflectance * shadow;`],
+      // Restore view-dependent depth instead of painting noise onto a solid
+      // blue body. Motion comes from reflections and light on the normals.
+      vec3 body = ( waterColor * 0.45 + scatter * 0.55 ) * mix( 0.88, 1.0, shadow ) + diffuseLight * waterColor * 0.08 * shadow;
+      vec3 softReflection = mix( reflectionSample, waterColor, 0.12 );
+      vec3 albedo = mix( body, softReflection, min( reflectance, 0.65 ) ) + specularLight * reflectance * shadow;`],
     // Clamp only the sampling coordinate; do not smear the whole reflection
     // with a fixed screen-space sinusoid as the previous water shader did.
     ['mirrorCoord.xy / mirrorCoord.w + distortion',
@@ -85,7 +81,7 @@ export function createTownWater({textureWidth,textureHeight,sunDirection,anisotr
 
 export function setWaterLighting(water,night,sun){
   const u=water.material.uniforms;
-  u.waterColor.value.set(night?'#102e47':'#4baafa');
+  u.waterColor.value.set(night?'#102e47':'#509fc8');
   u.sunColor.value.copy(sun.color).multiplyScalar(night?.16:1.8);
   u.sunDirection.value.copy(sun.position).sub(sun.target.position).normalize();
 }

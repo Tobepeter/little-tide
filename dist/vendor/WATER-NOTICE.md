@@ -15,6 +15,6 @@ water color, sun-highlight filtering and reflection sampling for Little Tide.
 The calm cartoon preset uses larger, shallower and slower ripples; a positive
 normal-map mip bias filters fine wrinkles without adding texture samples. The
 reflected image is lightly tinted and its contribution capped at grazing angles.
-Soft color glints reuse the filtered normals to make the gentle flow readable
-from the default camera, without extra samples, geometry or render passes.
+View-dependent reflection and gentle normal-driven distortion provide motion;
+the adapter does not paint the normal-map pattern directly onto the water color.
 The normal map is the unmodified 1024×1024 upstream image and is served locally.
