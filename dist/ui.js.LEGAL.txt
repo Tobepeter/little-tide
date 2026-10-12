@@ -75,6 +75,7 @@ lucide-react/dist/esm/icons/moon.js:
 lucide-react/dist/esm/icons/orbit.js:
 lucide-react/dist/esm/icons/paint-roller.js:
 lucide-react/dist/esm/icons/paintbrush.js:
+lucide-react/dist/esm/icons/palette.js:
 lucide-react/dist/esm/icons/plus.js:
 lucide-react/dist/esm/icons/redo-2.js:
 lucide-react/dist/esm/icons/shuffle.js:

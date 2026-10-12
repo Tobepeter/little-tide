@@ -1,5 +1,5 @@
 import React, { useSyncExternalStore } from 'react';
-import { House, Layers2, Paintbrush, PaintRoller, Eraser, Shuffle, Check, Undo2, Redo2, Ellipsis, Camera, Moon, Sun, LocateFixed, Plus, Minus, Orbit, Grid2X2, Sparkles, Volume2, VolumeX, CircleHelp, Trash2 } from 'lucide-react';
+import { House, Layers2, Paintbrush, PaintRoller, Eraser, Palette, Shuffle, Check, Undo2, Redo2, Ellipsis, Camera, Moon, Sun, LocateFixed, Plus, Minus, Orbit, Grid2X2, Sparkles, Volume2, VolumeX, CircleHelp, Trash2 } from 'lucide-react';
 import { ui } from './ui-store.js';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
@@ -41,7 +41,7 @@ export function App() {
       </ToggleGroup>
       <Separator orientation="vertical" className="dock-divider"/>
       <IconButton label="连续刷" shortcut="B" touchLabel="连刷" icon={PaintRoller} aria-keyshortcuts="b" aria-pressed={s.continuous} className={`continuous-toggle ${brushing?'is-on':''}`} disabled={!s.ready} onClick={()=>a.toggleContinuous?.()}/>
-      <Popover open={s.panel==='brush'} onOpenChange={panel('brush')}><PopoverTrigger asChild><IconButton label="笔刷与颜色" shortcut="C" aria-keyshortcuts="c" className="color-button" disabled={!s.ready}><span className={`color-disc ${s.selected<0?'random':''}`} style={s.selected>=0?{backgroundColor:colors[s.selected]}:undefined}/>{s.selected<0?<Shuffle className="color-icon"/>:<Check className="color-icon"/>}</IconButton></PopoverTrigger>
+      <Popover open={s.panel==='brush'} onOpenChange={panel('brush')}><PopoverTrigger asChild><IconButton label="笔刷与颜色" shortcut="C" aria-keyshortcuts="c" className="color-button" disabled={!s.ready}><Palette aria-hidden="true"/><span aria-hidden="true" className={`color-indicator ${s.selected<0?'random':''}`} style={s.selected>=0?{backgroundColor:colors[s.selected]}:undefined}/></IconButton></PopoverTrigger>
         <PopoverContent onCloseAutoFocus={keepCanvasFocus} side="top" sideOffset={12} align="center" collisionPadding={14} className="brush-popover w-72 rounded-xl p-4">
           <div className="setting-row mb-3"><span>颜色</span><Button variant={s.selected===-1?'secondary':'ghost'} size="sm" className="h-8 text-xs gap-2" aria-pressed={s.selected===-1} onClick={()=>a.setColor?.(-1)}><Shuffle size={14}/>随机</Button></div>
           <div className="color-palette" role="group" aria-label="颜色">{colors.map((c,i)=><Button key={c} variant="ghost" size="icon" className="palette-button" aria-label={names[i]} aria-pressed={s.selected===i} style={{backgroundColor:c}} onClick={()=>a.setColor?.(i)}>{s.selected===i&&<Check aria-hidden="true"/>}</Button>)}</div>

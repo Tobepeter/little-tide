@@ -1,19 +1,17 @@
 <!doctype html>
 <html lang="zh-CN"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#e5f3ff"><meta name="description" content="自由搭建三维水上小镇。">
+<meta name="theme-color" content="#203d54"><meta name="description" content="自由搭建三维水上小镇。">
 <title>小小潮汐</title><link rel="stylesheet" href="style.css">
 <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
 </head><body>
 <canvas id="world" tabindex="0" aria-label="三维小镇，轻点编辑，拖动环绕，双指平移和缩放，开启连续刷可批量编辑"></canvas>
 <div id="loading" role="status" aria-live="polite">
   <svg class="loading-scene" viewBox="0 0 200 196" aria-hidden="true" focusable="false">
-    <ellipse cx="100" cy="155" rx="73" ry="23" fill="#77bcec" opacity=".22"/>
-    <g fill="none" stroke="#f5fbff" stroke-width="1.5">
-      <ellipse class="loading-ripple" cx="100" cy="155" rx="61" ry="19"/>
-      <ellipse class="loading-ripple loading-ripple-later" cx="100" cy="155" rx="61" ry="19"/>
-    </g>
-    <ellipse class="loading-shadow" cx="100" cy="153" rx="45" ry="14" fill="#478ecc" opacity=".2"/>
+    <ellipse cx="100" cy="155" rx="76" ry="26" fill="#6ba2bd" opacity=".1"/>
+    <ellipse class="loading-track" cx="100" cy="155" rx="74" ry="25" fill="none" stroke="#7eacc4" stroke-width="1.2" opacity=".3"/>
+    <ellipse class="loading-orbit" cx="100" cy="155" rx="74" ry="25" fill="none" stroke="#c4e7f3" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="59.468 270.909"/>
+    <ellipse class="loading-shadow" cx="100" cy="153" rx="45" ry="14" fill="#102a3e" opacity=".3"/>
     <g class="loading-float" stroke-linejoin="round">
       <g class="loading-foundation">
         <path d="m40 136 60 27v10l-60-27Z" fill="#8fa4af"/>
@@ -24,7 +22,7 @@
       <g class="loading-walls">
         <path d="m61 86 39 17v43l-39-17Z" fill="#de9da0"/>
         <path d="m100 103 42-21v43l-42 21Z" fill="#bd7e8b"/>
-        <path d="m61 86 19-25 20 42Z" fill="#edb6b1"/>
+        <path d="m61 86v-5l19-23 20 45Z" fill="#edb6b1"/>
         <path d="m71 111 12 5v22l-12-5Z" fill="#a76977"/>
         <path d="m74 115 7 3v18l-7-3Z" fill="#8f6375"/>
         <path d="m66 96 8 3v10l-8-3Z" fill="#fff0d8"/>
@@ -49,11 +47,11 @@
       </g>
     </g>
   </svg>
-  <div class="loading-caption">
-    <span id="loading-status">加载中</span>
-    <span class="loading-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-  </div>
-  <button id="loading-retry" class="loading-retry" type="button" hidden>重新加载</button>
+  <span id="loading-status" class="sr-only">正在加载小镇</span>
+  <button id="loading-retry" class="loading-retry" type="button" aria-label="重新加载" title="重新加载" hidden>
+    <!-- Lucide RotateCw, lucide-static v0.468.0, ISC license. -->
+    <svg class="lucide lucide-rotate-cw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+  </button>
 </div>
 <div id="ui-root"></div>
 <script type="module">
@@ -61,7 +59,7 @@ import('./ui.js').then(()=>import('./game.js')).catch(error=>{
   console.error(error);const loading=document.getElementById('loading');
   if(loading){
     loading.classList.remove('done');loading.dataset.state='error';loading.setAttribute('role','alert');loading.removeAttribute('aria-hidden');
-    document.getElementById('loading-status').textContent='小镇暂时没能打开';
+    const status=document.getElementById('loading-status');status.classList.remove('sr-only');status.textContent='小镇暂时没能打开';
     const retry=document.getElementById('loading-retry');retry.hidden=false;retry.addEventListener('click',()=>location.reload());
   }
 });
