@@ -131,10 +131,27 @@ body.dark {
   transition:opacity .2s,transform .2s;box-shadow:0 3px 15px #2b536e12;
 }
 .game-toast.visible {opacity:1;transform:translate(-50%,0)}
-#loading {position:fixed;inset:0;z-index:100;background:#bfd8e3;display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;transition:opacity .4s}
+#loading {position:fixed;inset:0;z-index:100;background:#bfd8e3;color:#41657d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;font-size:12px;transition:opacity .45s ease}
 #loading.done {opacity:0;pointer-events:none}
-.spinner {width:18px;height:18px;border:1.5px solid #427d9e30;border-top-color:#427d9e;border-radius:50%;animation:spin .9s linear infinite}
-@keyframes spin {to{transform:rotate(360deg)}}
+body.night #loading {background:#142738;color:#a7c5d5}
+.loading-scene {display:block;width:clamp(168px,35vw,204px);height:auto;overflow:visible;flex:none}
+.loading-float {animation:loading-float 3.2s ease-in-out 1s infinite}
+.loading-foundation {animation:loading-build .65s cubic-bezier(.2,.7,.25,1) both}
+.loading-walls {animation:loading-build .7s cubic-bezier(.2,.7,.25,1) .12s both}
+.loading-roof {animation:loading-build .75s cubic-bezier(.2,.7,.25,1) .28s both}
+.loading-shadow {transform-origin:100px 153px;animation:loading-shadow 3.2s ease-in-out 1s infinite}
+.loading-ripple {transform-origin:100px 155px;animation:loading-ripple 3.2s ease-out infinite}
+.loading-ripple-later {animation-delay:-1.6s}
+.loading-window {animation:loading-window 3.2s ease-in-out 1s infinite;opacity:.12}
+.loading-retry {min-height:40px;padding:0 16px;border:1px solid #7096ae55;border-radius:10px;background:#a5c5d780;color:inherit;font:inherit;cursor:pointer;transition:background .2s}
+.loading-retry:hover {background:#96b9d099}
+.loading-retry:focus-visible {outline:2px solid #427d9e;outline-offset:3px}
+#loading[data-state=error] .loading-scene * {animation:none}
+@keyframes loading-build {0%{opacity:0;transform:translateY(-26px)}55%{opacity:1;transform:translateY(3px)}76%{transform:translateY(-2px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes loading-float {0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes loading-shadow {0%,100%{transform:scale(1);opacity:.2}50%{transform:scale(.92);opacity:.14}}
+@keyframes loading-ripple {0%{transform:scale(.8);opacity:0}20%{opacity:.65}100%{transform:scale(1.3);opacity:0}}
+@keyframes loading-window {0%,100%{opacity:.12}45%,65%{opacity:.85}}
 @media(max-width:640px) {
   .dock-position {bottom:calc(14px + env(safe-area-inset-bottom))}
   .dock {display:grid;grid-template-columns:repeat(5,44px);gap:3px;padding:6px}
