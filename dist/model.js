@@ -84,7 +84,7 @@ function terraceRoof(group,run){const w=run.n*CELL,y=wallY(run.h),x=(run.n-1)*CE
 for(const z of[-.80,.80]){for(let xx=-w/2+.09;xx<=w/2;xx+=.42)line(group,[x+xx,y+.10,z],[x+xx,y+.51,z],'#4e696e',.013);line(group,[x-w/2+.08,y+.51,z],[x+w/2-.08,y+.51,z],'#4e696e',.016)}
 for(const xx of[x-w/2+.08,x+w/2-.08]){for(let z=-.8;z<=.81;z+=.4)line(group,[xx,y+.1,z],[xx,y+.51,z],'#4e696e',.013);line(group,[xx,y+.51,-.8],[xx,y+.51,.8],'#4e696e',.016)}
 for(const xx of[x-w/2+.32,x+w/2-.32]){box(group,.32,.24,.32,xx,y+.19,-.47,'#c48570',.03);box(group,.39,.30,.38,xx,y+.40,-.47,'#92ad82',.11)}box(group,.7,.08,.26,x,y+.22,.3,'#af8b67',.025);for(const xx of[x-.25,x+.25])box(group,.06,.20,.2,xx,y+.1,.3,'#af8b67');return deck}
-export function buildTown(town){const root=new THREE.Group(),pickers=[],windows=[],foam=[],selectionParts=new Map(),motionBindings=[];
+export function buildTown(town){const root=new THREE.Group(),pickers=[],windows=[],selectionParts=new Map(),motionBindings=[];
 // A brush stroke usually changes a handful of cells. Reuse unchanged facade
 // templates, invalidating a cell when its height, appearance or neighbours change.
 for(const k of cellTemplates.keys())if(!town[k])cellTemplates.delete(k);
@@ -96,7 +96,6 @@ box(group,CELL,.55,CELL,0,.225,0,'#8196a1',.055);box(group,CELL+.025,.105,CELL+.
 if(b.h>0){box(group,CELL-.095,b.h*FLOOR,CELL-.095,0,BASE+b.h*FLOOR/2,0,PALETTE[b.c],.065);box(group,CELL-.035,.09,CELL-.035,0,wallY(b.h)-.035,0,'#f1e7cc',.025)}else{for(let i=-1;i<=1;i++){box(group,.015,.004,CELL-.15,i*.48,BASE+.035,0,'#beafa0');box(group,CELL-.15,.004,.015,0,BASE+.035,i*.48,'#beafa0')}}
 for(let side=0;side<4;side++)facade(group,b,town,side);
 cellTemplates.set(k,{signature,group})}root.add(group);
-for(const[dx,dz]of[[0,1],[1,0],[0,-1],[-1,0]])if(!town[key(b.x+dx,b.z+dz)])foam.push({x:b.x*CELL+dx*.97,z:b.z*CELL+dz*.97,angle:dx?Math.PI/2:0});
 const proxy=new THREE.Mesh(geometry(CELL-.08,Math.max(.55,b.h*FLOOR+.55),CELL-.08),new THREE.MeshBasicMaterial({visible:false}));proxy.position.set(b.x*CELL,BASE+(b.h*FLOOR)/2,b.z*CELL);proxy.userData.cell=k;pickers.push(proxy);root.add(proxy);
 }
 for(const run of roofRuns(town)){const roofMesh=roof(root,run);roofMesh.userData.roofRun=run;pickers.push(roofMesh)}
@@ -108,7 +107,7 @@ let owner=o;while(owner&&!owner.userData.cell&&!owner.userData.roofRun)owner=own
 for(const k of cells){if(!selectionParts.has(k))selectionParts.set(k,[]);selectionParts.get(k).push({geometry:o.geometry,matrix:o.matrixWorld.clone(),clip:!!run,material:o.material})}
 o.userData.motionOwners=cells;const id=o.geometry.uuid+'/'+(Array.isArray(o.material)?o.material.map(m=>m.uuid).join(','):o.material.uuid)+'/'+o.castShadow+'/'+o.receiveShadow;if(!batches.has(id))batches.set(id,[]);batches.get(id).push(o)});
 root.clear();for(const objects of batches.values()){const first=objects[0],mesh=new THREE.InstancedMesh(first.geometry,first.material,objects.length);objects.forEach((o,i)=>{mesh.setMatrixAt(i,o.matrixWorld);const owners=o.userData.motionOwners,center=owners.reduce((v,k)=>{const[x,z]=k.split(',').map(Number);return v.add(new THREE.Vector3(x*CELL,0,z*CELL))},new THREE.Vector3()).divideScalar(Math.max(1,owners.length));motionBindings.push({mesh,index:i,base:o.matrixWorld.clone(),owners,center,group:owners.join('|')})});mesh.frustumCulled=false;mesh.matrixAutoUpdate=false;mesh.castShadow=first.castShadow;mesh.receiveShadow=first.receiveShadow;mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);mesh.instanceMatrix.needsUpdate=true;mesh.computeBoundingSphere();root.add(mesh)}
-root.updateMatrixWorld(true);return{root,pickers,windows,foam,selectionParts,motionBindings};
+root.updateMatrixWorld(true);return{root,pickers,windows,selectionParts,motionBindings};
 }
 export function createSelection(built,k,color='#ff706b',opacity=.34){const group=new THREE.Group(),[x,z]=k.split(',').map(Number);const base=new THREE.MeshBasicMaterial({color,transparent:true,opacity,depthWrite:false,depthTest:true,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});const clipped=base.clone();clipped.clippingPlanes=[new THREE.Plane(new THREE.Vector3(1,0,0),-x*CELL+CELL/2+.035),new THREE.Plane(new THREE.Vector3(-1,0,0),x*CELL+CELL/2+.035),new THREE.Plane(new THREE.Vector3(0,0,1),-z*CELL+CELL/2+.035),new THREE.Plane(new THREE.Vector3(0,0,-1),z*CELL+CELL/2+.035)];
 for(const part of built.selectionParts.get(k)||[]){const m=new THREE.Mesh(part.geometry,part.clip?clipped:base);m.matrixAutoUpdate=false;m.matrix.copy(part.matrix);m.renderOrder=3;group.add(m)}group.userData.materials=[base,clipped];return group}
