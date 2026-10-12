@@ -1,19 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <title>小小潮汐</title>
-  <rect width="64" height="64" rx="14" fill="#b8def2"/>
-  <ellipse cx="32" cy="50" rx="27" ry="9" fill="#72bce3"/>
-  <g stroke-linejoin="round">
-    <path d="m8 46 24-11 24 11-24 11Z" fill="#f1e6d5"/>
-    <path d="m8 46 24 11v4L8 50Z" fill="#9eafba"/>
-    <path d="m32 57 24-11v4L32 61Z" fill="#829cae"/>
-    <path d="m17 27 15 7v17l-15-7Z" fill="#df9ea0"/>
-    <path d="m32 34 17-8v17l-17 8Z" fill="#bd7e8b"/>
-    <path d="m17 27 7-12 8 19Z" fill="#edb6b1"/>
-    <path d="m22 35 5 2v11l-5-2Z" fill="#976274"/>
-    <path d="m37 35 8-4v8l-8 4Z" fill="#ffe8b9"/>
-    <path d="m24 15 17-8 12 19-21 10Z" fill="#e7bd8b"/>
-    <path d="m32 36 21-10v3L32 39Z" fill="#bd8d75"/>
-    <path d="m14 27 10-12 8 21v3L24 20l-10 10Z" fill="#fae6c8"/>
-    <path d="m24 15 17-8" fill="none" stroke="#fff0d3" stroke-width="1.5" stroke-linecap="round"/>
-  </g>
+  <path d="M13 27 32 10l19 17v29a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2Z" fill="#e5aaac"/>
+  <path d="M13 54h38v2a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2Z" fill="#d39298"/>
+  <path d="M7 28 32 6l25 22" fill="none" stroke="#d8a674" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="19" y="32" width="9" height="10" rx="1" fill="#fff0d8"/>
+  <rect x="36" y="32" width="9" height="10" rx="1" fill="#fff0d8"/>
+  <path d="M21 34h5v6h-5zm17 0h5v6h-5Z" fill="#6998b5"/>
+  <path d="M27 58V47a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11Z" fill="#966a7a"/>
 </svg>
